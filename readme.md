@@ -11,7 +11,12 @@ a place to list what i want before i use a task board or project management soft
 ## Change Tracker
 ### 2nd OCT 2024
 docker directive reference
-https://docs.docker.com/reference/dockerfile/
+https://docs.docker.com/reference/dockerfile/  
+
+### 5th OCT 2024
+added a script to read files and give back data. needs a lot of refinement. 
+https://github.com/chrismattmann/tika-python/issues/191
+
 
 #### Some commands which i will get rid of ASAP
 

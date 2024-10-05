@@ -3,7 +3,7 @@ FROM python:3.10.9-slim-bullseye
 # Copy only requirements to cache them in docker layer:
 WORKDIR /usr/src
 
-RUN pip install watchfiles
+RUN pip install watchfiles tika
 
 # Set the python path:
 ## ENV PYTHONPATH="$PYTHONPATH:${PWD}"
