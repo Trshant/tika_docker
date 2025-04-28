@@ -50,6 +50,6 @@ class FileProcessor:
 extractor = PDFTextExtractor()
 processor = FileProcessor(extractor)
 
-file_path = "dictionary.pdf"  # Replace with the actual file path
+file_path = "files/big.pdf"  # Replace with the actual file path
 processor.process_file(file_path)
 
