@@ -13,8 +13,6 @@ import time  # Required by parsedatetime's result format
 
 
 def get_date_strings(text_ str) -> list[str]:
-    # this function removes only the dates of parts of the text that signifies some form of date or time.
-    # Load the English language model
     nlp = spacy.load(
         "en_core_web_sm"
     )  # You might need to download this: python -m spacy download en_core_web_sm
@@ -27,47 +25,33 @@ def get_date_strings(text_ str) -> list[str]:
     return dates
 
 
-def parse_date_strings(text: str, basis_date: datetime = datetime.now()) -> datetime:
-    # This uses parseddatetime to convert text to dates
-
-    # args:
-    #     text - date string
-    #     basis_date - this is a reference date.  it defaults to todays date
-
-
+def to_datetime_using_parsedatetime(text: str, basis_date: datetime = datetime.now()) -> datetime:
     cal = pdt.Calendar()
     result: tuple, parse_status: int = cal.parse(text, sourceTime=basis_date)
     if parse_status > 0:
-        # result is a time.struct_time tuple: (year, month, day, hour, min, sec, weekday, yearday, isdst)
-        # Convert the time.struct_time to a datetime object
         future_datetime = datetime(*result[:6])
         return future_datetime
 
 
 def extract_dates(text, basis_date=datetime.now()) -> list[datetime.date]:
-    # Args:
-    #     text (str): The input text to extract dates from.
-    #     basis_date (datetime.date, optional): A reference date for interpreting
-    #                                            relative dates. Defaults to todays datetime.
-
-    # Returns:
-    #     list: A list of datetime.date objects extracted from the text.
-    #           Returns None for entries that could not be parsed.
-
+    # using spacy to get the parts of text that are calendar related.
     dates_in_text = get_date_strings(text)
-    print(dates_in_text)
-
+    # go through the list.
     dates = []
     for part in dates_in_text:  # Split the text into words/potential date parts
+        # try using dateparser...
         date_data = dateparser.parse(
             part,
             settings={"RELATIVE_BASE": basis_date},
         )
         if date_data:
             dates.append(date_data.date())
+        # in case it fails....
         else:
-            dates.append(parse_date_strings(part, basis_date))
-    return [date for date in dates if date is not None]
+            # use parsedatetime to try and extract data
+            dates.append(to_datetime_using_parsedatetime(part, basis_date))
+    # a list of datetimes should be the result.
+    return [date for date in dates if isinstance(date, datetime)]
 
 
 # Example usage:
