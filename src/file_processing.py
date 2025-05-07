@@ -2,8 +2,8 @@
 from datetime import datetime
 
 from celeryconfig import app
-from PyPDF2 import PdfReader
-from bs4 import BeautifulSoup
+
+
 
 @app.task(name='process_file')
 def process_file(file_path, metadata):
@@ -17,3 +17,5 @@ def process_file(file_path, metadata):
     pass  # Replace with actual processing code
 
     print(f"Task completed at {datetime.now()}")
+
+app.start()
