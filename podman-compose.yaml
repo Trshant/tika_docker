@@ -1,0 +1,37 @@
+---
+version: "3.8" # Use a version compatible with your podman-compose installation
+
+services:
+  rabbitmq:
+    # Use the official RabbitMQ image with the management plugin included
+    image: docker.io/rabbitmq:3-management-alpine
+    container_name: rabbitmq_server
+    hostname: my-rabbit # Hostname for the RabbitMQ node inside the container
+    ports:
+      # Map host port 5672 to container port 5672 (AMQP client port)
+      - "5672:5672"
+      # Map host port 15672 to container port 15672 (Management UI)
+      - "15672:15672"
+    volumes:
+      # Mount a named volume to persist RabbitMQ data
+      # The ':Z' might be needed if you run Podman with SELinux enabled (common on Fedora/RHEL)
+      # Use ':Z' if the volume content is private to the container.
+      # Use ':z' if the volume content needs to be shared between containers.
+      # Omit if SELinux is disabled or not causing issues.
+      - rabbitmq_data:/var/lib/rabbitmq # Add :Z or :z if needed for SELinux
+    environment:
+      # Set default user and password - CHANGE THESE FOR PRODUCTION!
+      RABBITMQ_DEFAULT_USER: guest # Default is 'guest', you can change it here
+      RABBITMQ_DEFAULT_PASS: guest # Default is 'guest', CHANGE THIS!
+      # Optional: Set Node Name
+      # RABBITMQ_NODENAME: rabbit@my-rabbit # Defaults to rabbit@<hostname>
+    restart: unless-stopped # Optional: Policy to restart the container
+    healthcheck: # Optional: Basic healthcheck
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+# Define the named volume for data persistence
+volumes:
+  rabbitmq_data: {}

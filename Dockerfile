@@ -1,4 +1,4 @@
-FROM python:3.10.9-slim-bullseye
+FROM docker.io/python:3.10.9-slim-bullseye
 
 # Copy only requirements to cache them in docker layer:
 WORKDIR /usr/src
