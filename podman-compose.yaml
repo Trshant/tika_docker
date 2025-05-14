@@ -1,6 +1,10 @@
 ---
 version: "3.8" # Use a version compatible with your podman-compose installation
 
+networks:
+  wiki:
+    driver: bridge
+
 services:
   rabbitmq:
     # Use the official RabbitMQ image with the management plugin included
@@ -18,7 +22,7 @@ services:
       # Use ':Z' if the volume content is private to the container.
       # Use ':z' if the volume content needs to be shared between containers.
       # Omit if SELinux is disabled or not causing issues.
-      - rabbitmq_data:/var/lib/rabbitmq # Add :Z or :z if needed for SELinux
+      - ./rabbitmq_data:/var/lib/rabbitmq # Add :Z or :z if needed for SELinux
     environment:
       # Set default user and password - CHANGE THESE FOR PRODUCTION!
       RABBITMQ_DEFAULT_USER: guest # Default is 'guest', you can change it here
@@ -31,7 +35,27 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+    - wiki
 
-# Define the named volume for data persistence
-volumes:
-  rabbitmq_data: {}
+  mariadb:
+    image: docker.io/mariadb:latest
+    container_name: mariadb_documents
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: cybhat
+      MYSQL_DATABASE: document
+      MYSQL_USER: superman
+      MYSQL_PASSWORD: daddy
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+    - wiki
+

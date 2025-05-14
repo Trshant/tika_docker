@@ -1,0 +1,27 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+  
+  al-init:
+    cmds:
+      - alembic init migrations
+    silemt: true
+  
+  al-add-rev:
+    cmds:
+      - alembic revision -m "{{.MSG}}"
+    silent: true
+  
+  al-upgrade
+    cmds:
+      - alembic upgrade head
+    silent: true
